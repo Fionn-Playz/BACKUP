@@ -1,0 +1,8 @@
+Package: backup-tool
+Version: 1.1
+Section: utils
+Priority: optional
+Architecture: all
+Maintainer: Your Name <testy1132@gmail.com>
+Description: A simple script to back up user files.
+ This tool provides an easy way to back up important documents or folders.
