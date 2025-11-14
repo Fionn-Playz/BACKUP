@@ -1,1 +1,44 @@
+#!/bin/bash
 
+# Define a timestamp variable
+TIMESTAMP=$(date +%H-%M-%S_%d-%m-%y)
+mkdir -p "$HOME/backups"
+# 1. Prompt for the source folder path
+read -r -p "Enter the FULL path of the folder or (file) to backup (e.g., /home/fionn_playz): " SOURCE_FOLDER
+
+# 2. Define the output file name using the folder name and the timestamp
+# The basename command extracts just the last part of the path (e.g., "fionn_playz")
+FOLDER_BASENAME=$(basename "$SOURCE_FOLDER")
+OUTPUT_FILE="${FOLDER_BASENAME}_${TIMESTAMP}.zip"
+
+# --- Main Logic ---
+
+# 3. Check if the specified folder actually exists
+if [ -d "$SOURCE_FOLDER" ]; then
+    echo ""
+    echo "Starting compression of folder: $SOURCE_FOLDER"
+    echo "Output file will be: $OUTPUT_FILE"
+
+    # 4. Use the 'zip' command to compress the folder
+    # -r: recursively include all files and folders
+    # -q: quiet mode (silences the output)
+    zip -r -q "backups/$OUTPUT_FILE" "$SOURCE_FOLDER"
+
+    # 5. Check the exit status of the zip command ($?)
+    if [ $? -eq 0 ]; then
+        echo ""
+        echo "âœ… Success! Backup created:"
+        echo "  - File: $(pwd)/backups/$OUTPUT_FILE"
+        echo "  - Size: $(du -sh "backups/$OUTPUT_FILE" | awk '{print $1}')"
+        echo ""
+    else
+        echo ""
+        echo "âŒ Error: The 'zip' command failed. Check permissions or installation."
+        echo ""
+    fi
+else
+    # 6. Error message if the path doesn't exist
+    echo ""
+    echo "âŒ Error: Source folder not found at $SOURCE_FOLDER"
+    echo ""
+fi
