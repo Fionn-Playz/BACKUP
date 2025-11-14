@@ -50,11 +50,14 @@
                 After downloading, run the following command in your terminal.
             </p>
 
-            <div class="flex items-center bg-gray-800 rounded-lg p-3">
-                <code id="installCommand" class="flex-grow text-white text-sm md:text-base select-all overflow-x-auto whitespace-nowrap">
-                    sudo apt install zip tar -y
-                    sudo dpkg -i BACKUP.deb
-                </code>
+            <div class="bg-gray-800 rounded-lg p-3">
+                <pre id="installCommand" class="text-white text-sm md:text-base select-all overflow-x-auto">
+                    <code>
+                        sudo apt install zip tar -y
+                        sudo dpkg -i BACKUP.deb
+                    </code>
+                </pre>
+            </div>
                 <button onclick="copyCommand()" class="ml-4 flex-shrink-0 bg-indigo-500 hover:bg-indigo-600 text-white font-medium py-2 px-3 rounded-lg transition duration-150">
                     <svg class="w-5 h-5" id="copyIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-1M8 5v2m0 0h8m-8 0H6M20 7v10m-4-2H4"></path></svg>
                     <span id="copyText" class="hidden">Copied!</span>
