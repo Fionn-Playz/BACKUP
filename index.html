@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simple Backup Tool | Distributed via APT</title>
-    <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Configure Tailwind to use the Inter font -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         body {
@@ -20,7 +18,6 @@
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
 
-    <!-- Main Container Card -->
     <div class="w-full max-w-2xl bg-white p-8 md:p-10 rounded-xl card-shadow border border-gray-100">
 
         <header class="text-center mb-10">
@@ -28,64 +25,64 @@
             <p class="mt-2 text-xl text-gray-500">The easiest way to zip and archive your files and folders on Linux.</p>
         </header>
 
-        <!-- Download Section -->
         <section class="mb-8 p-6 bg-indigo-50 rounded-lg border-l-4 border-indigo-500">
             <h2 class="text-2xl font-semibold text-indigo-800 mb-4">1. Download the Package</h2>
             <p class="text-gray-600 mb-6">
                 Download the latest Debian package (`.deb` file) directly from our GitHub Releases page.
             </p>
 
-            <!-- TODO: REPLACE THIS LINK WITH YOUR DIRECT DOWNLOAD URL -->
             <a id="downloadButton" href="https://github.com/fionn-playz/BACKUP/releases/latest/download/BACKUP.deb" 
-               class="inline-flex items-center justify-center w-full md:w-auto px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-lg text-white bg-indigo-600 hover:bg-indigo-700 transition duration-150 ease-in-out transform hover:scale-[1.02]">
+                class="inline-flex items-center justify-center w-full md:w-auto px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-lg text-white bg-indigo-600 hover:bg-indigo-700 transition duration-150 ease-in-out transform hover:scale-[1.02]">
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                 Download Latest .DEB
             </a>
         </section>
 
-        <!-- Install Command Section -->
         <section class="mb-8 p-6 bg-gray-50 rounded-lg border-l-4 border-gray-400">
             <h2 class="text-2xl font-semibold text-gray-800 mb-4">2. Install the Utility</h2>
             <p class="text-gray-600 mb-4">
                 After downloading, run the following command in your terminal.
             </p>
-
-            <div class="bg-gray-800 rounded-lg p-3">
-                <pre id="installCommand" class="text-white text-sm md:text-base select-all overflow-x-auto">
-                    <code>
-                        sudo apt install zip tar -y
-                        sudo dpkg -i BACKUP.deb
-                    </code>
-                </pre>
-            </div>
-                <button onclick="copyCommand()" class="ml-4 flex-shrink-0 bg-indigo-500 hover:bg-indigo-600 text-white font-medium py-2 px-3 rounded-lg transition duration-150">
+            
+            <div class="flex items-center space-x-3">
+                <div class="bg-gray-800 rounded-lg p-3 flex-grow min-w-0"> 
+                    <pre id="installCommand" class="text-white text-sm md:text-base select-all overflow-x-auto m-0">
+                        <code>
+                            sudo apt install zip tar -y
+                            sudo dpkg -i BACKUP.deb
+                        </code>
+                    </pre>
+                </div>
+                <button onclick="copyCommand()" class="flex flex-shrink-0 bg-indigo-500 hover:bg-indigo-600 text-white font-medium py-3 px-4 rounded-lg transition duration-150 h-full items-center justify-center">
                     <svg class="w-5 h-5" id="copyIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-1M8 5v2m0 0h8m-8 0H6M20 7v10m-4-2H4"></path></svg>
-                    <span id="copyText" class="hidden">Copied!</span>
+                    <span id="copyText" class="ml-2">Copy</span>
                 </button>
             </div>
+            
             <p id="copyMessage" class="mt-2 text-sm text-green-600 opacity-0 transition duration-300">Command copied to clipboard!</p>
         </section>
 
-        <!-- Support Section -->
         <section class="text-center pt-4 border-t border-gray-200">
             <h2 class="text-xl font-semibold text-gray-700 mb-3">Found an Issue?</h2>
             <p class="text-gray-600">
                 If you encounter any bugs, please report them directly.
             </p>
-            <!-- TODO: REPLACE WITH YOUR ACTUAL EMAIL ADDRESS -->
             <a href="mailto:testy1132@gmail.com?subject=Backup%20Tool%20Issue%20Report%20(V1.0)"
-               class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-indigo-600 bg-indigo-100 hover:bg-indigo-200 transition duration-150 ease-in-out">
+                class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-indigo-600 bg-indigo-100 hover:bg-indigo-200 transition duration-150 ease-in-out">
                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                Email Me about a bug
             </a>
         </section>
     </div>
 
-    <!-- JavaScript for Copy-to-Clipboard Functionality -->
     <script>
         // Function to copy text to clipboard
         function copyCommand() {
-            const commandText = document.getElementById('installCommand').textContent.trim();
+            // Trim whitespace from the text content of the command code block
+            const commandText = document.getElementById('installCommand').querySelector('code').textContent.trim();
+            const copyButton = document.querySelector('button[onclick="copyCommand()"]');
+            const copyIcon = document.getElementById('copyIcon');
+            const copyTextSpan = document.getElementById('copyText');
             const copyMessage = document.getElementById('copyMessage');
             
             // Fallback for secure copy since navigator.clipboard might fail in some contexts (like iframes)
@@ -104,23 +101,40 @@
             document.body.removeChild(textarea);
 
             if (success) {
-                // Show the "Copied!" message temporarily
+                // Initial Button State
+                const originalBg = 'bg-indigo-500';
+                const originalHoverBg = 'hover:bg-indigo-600';
+                // Success State
+                const successBg = 'bg-green-600';
+                const successHoverBg = 'hover:bg-green-700';
+
+                // 1. Change Button Style
+                copyButton.classList.remove(originalBg, originalHoverBg);
+                copyButton.classList.add(successBg, successHoverBg);
+
+                // 2. Change Button Text/Icon
+                copyIcon.classList.add('hidden');
+                copyTextSpan.classList.remove('hidden');
+                copyTextSpan.textContent = 'Copied!';
+
+                // 3. Show "Command copied to clipboard!" message
                 copyMessage.classList.remove('opacity-0');
                 copyMessage.classList.add('opacity-100');
-                
-                // Change icon temporarily (using CSS classes for a visual change)
-                const copyButton = document.querySelector('button[onclick="copyCommand()"]');
-                const originalBg = 'bg-indigo-500';
-                const successBg = 'bg-green-600';
 
-                copyButton.classList.remove(originalBg);
-                copyButton.classList.add(successBg);
-
+                // Revert changes after 2 seconds
                 setTimeout(() => {
+                    // Revert Button Style
+                    copyButton.classList.remove(successBg, successHoverBg);
+                    copyButton.classList.add(originalBg, originalHoverBg);
+
+                    // Revert Button Text/Icon
+                    copyIcon.classList.remove('hidden');
+                    copyTextSpan.classList.add('hidden');
+                    copyTextSpan.textContent = 'Copy'; // Reset text just in case
+
+                    // Hide "Command copied to clipboard!" message
                     copyMessage.classList.remove('opacity-100');
                     copyMessage.classList.add('opacity-0');
-                    copyButton.classList.remove(successBg);
-                    copyButton.classList.add(originalBg);
                 }, 2000);
             }
         }
