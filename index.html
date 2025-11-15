@@ -46,6 +46,62 @@
             flex-shrink: 0;
             margin-top: 4px; /* Align with text */
         }
+        
+        /* Styling for the FAQ summary element */
+        details summary {
+            cursor: pointer;
+            padding: 0.75rem 0;
+            font-weight: 600; /* semi-bold */
+            color: #374151; /* gray-700 */
+            border-bottom: 1px solid #e5e7eb; /* gray-200 */
+            transition: color 0.15s ease-in-out;
+        }
+
+        details summary:hover {
+            color: #1f2937; /* gray-900 */
+        }
+
+        details[open] summary {
+            color: #4f46e5; /* indigo-600 when open */
+            border-bottom-color: transparent;
+        }
+
+        details p {
+            padding-bottom: 1rem;
+            color: #6b7280; /* gray-500 */
+        }
+
+        /* Responsive Video Container - maintains 16:9 ratio */
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio (9 / 16 * 100) */
+            height: 0;
+            overflow: hidden;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        .video-container iframe,
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+        
+        /* Style for the placeholder image/text before a video is added */
+        .video-placeholder-content {
+            background-color: #e5e7eb; /* Gray-200 for placeholder */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            color: #4b5563; /* Gray-600 */
+            height: 100%;
+        }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
@@ -95,9 +151,29 @@ sudo dpkg -i BACKUP.deb</code></pre>
             <p id="copyMessage" class="mt-2 text-sm text-green-600 opacity-0 transition duration-300 font-medium">Command copied to clipboard!</p>
         </section>
 
-        <!-- 3. Usage Guide & Features Section (Refined Layout) -->
+        <!-- 3. Usage Guide & Features Section -->
         <section class="mb-8 p-6 bg-white rounded-xl border border-gray-200">
             <h2 class="text-2xl font-bold text-gray-800 mb-4">3. How to Use & Key Features</h2>
+            
+            <h3 class="text-xl font-semibold text-gray-700 mt-6 mb-3">Video Demonstration</h3>
+            
+            <!-- VIDEO CONTAINER - Ready for an embedded video or GIF/MP4 -->
+            <div class="mb-8">
+                <div class="video-container">
+                    
+                    <!-- 
+                        ACTION: Placeholder replaced with a <video> tag structure.
+                        
+                        1. Replace the "YOUR_VIDEO_URL_HERE.mp4" with the actual link to your video file.
+                        2. If your video is a GIF, you can change 'type="video/mp4"' to 'type="image/gif"'.
+                    -->
+                    <video controls autoplay loop muted>
+                       <source src="Preview.mp4" type="video/mp4">
+                       Sorry, your browser doesn't support embedded videos.
+                    </video>
+
+                </div>
+            </div>
             
             <h3 class="text-xl font-semibold text-gray-700 mt-6 mb-3">Usage Guide</h3>
             <p class="text-gray-600 mb-4">The utility is run using the simple `backup` command. Provide the directory to archive and a name for the output file.</p>
@@ -148,6 +224,36 @@ sudo dpkg -i BACKUP.deb</code></pre>
                     <svg class="w-6 h-6 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 17V10M9 14l3 3m3-3l-3 3"></path></svg>
                     <p class="text-gray-700 leading-tight">**Auto Folder Creation:** Puts all the files in a folder name backups that it automatically creates!</p>
                 </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="mb-8 p-6 bg-white rounded-xl border border-gray-200">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Frequently Asked Questions (FAQ)</h2>
+            <div class="divide-y divide-gray-200">
+                
+                <details>
+                    <summary>Which operating systems are supported?</summary>
+                    <p class="mt-2 text-sm">The Simple Backup Utility is packaged as a **.deb** file, meaning it is designed for Debian-based Linux distributions, including **Ubuntu, Mint, Kali, and Debian itself**.</p>
+                </details>
+                
+                <details>
+                    <summary>How do I uninstall the utility?</summary>
+                    <p class="mt-2 text-sm">You can easily remove the utility using the standard package manager command: 
+                        <span class="font-mono bg-gray-100 p-1 rounded text-sm text-red-600">sudo dpkg -r backup</span>
+                    </p>
+                </details>
+
+                <details>
+                    <summary>Where does the utility save the archived files?</summary>
+                    <p class="mt-2 text-sm">By default, all archives are saved in a folder named <span class="font-mono bg-gray-100 p-1 rounded text-sm text-gray-800">backups</span> located in the directory where you run the `backup` command.</p>
+                </details>
+
+                <details>
+                    <summary>Does this tool require an internet connection?</summary>
+                    <p class="mt-2 text-sm">No. Once the initial package is downloaded and installed, the utility uses only local system tools (`zip` and `tar`) and operates completely offline.</p>
+                </details>
+
             </div>
         </section>
 
