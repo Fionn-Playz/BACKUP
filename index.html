@@ -127,18 +127,27 @@
     <!-- Main Container Card -->
     <div class="w-full max-w-2xl bg-white p-8 md:p-10 rounded-xl card-shadow border border-gray-100">
 
-        <header class="text-center mb-10">
+        <header class="text-center mb-6">
             <!-- Increased font size and weight for emphasis -->
             <h1 class="text-5xl font-extrabold text-indigo-800">Simple Backup Utility</h1>
-            <p class="mt-2 text-xl text-gray-600">Easily zip and archive your files and folders on Linux.</p>
+            <p class="mt-2 text-xl text-gray-600">Easily zip and archive your files and folders on Linux/Mac.</p>
         </header>
+        
+        <!-- OS Switcher -->
+        <div class="mb-8 flex justify-center space-x-4">
+            <button id="switchLinux" onclick="setOS('Linux')" 
+                class="px-4 py-2 rounded-lg font-semibold border-2 transition duration-150 shadow-md">Linux</button>
+            <button id="switchMac" onclick="setOS('Mac')" 
+                class="px-4 py-2 rounded-lg font-semibold border-2 transition duration-150 shadow-md">Mac</button>
+        </div>
+
 
         <!-- 1. Download Section (Initial State: ACTIVE/Indigo) -->
         <section id="downloadSection" class="mb-8 p-6 bg-indigo-50 rounded-xl border-l-2 border-indigo-500 transition-colors duration-500">
             <h2 class="text-2xl font-bold text-indigo-800 mb-4" id="downloadTitle">1. Download the Package</h2>
             <p class="text-gray-700 mb-6" id="downloadSubtext">Get the latest Debian package (`.deb` file) from the GitHub Releases page.</p>
 
-            <a id="downloadButton" href="https://github.com/fionn-playz/BACKUP/releases/latest/download/BACKUP.deb" 
+            <a id="downloadButton" href="#" 
                 onclick="downloadClicked(event)"
                 aria-label="Download the Backup Installation File"
                 class="inline-flex items-center justify-center w-full md:w-auto px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-lg text-white bg-indigo-600 hover:bg-indigo-700 transition duration-150 ease-in-out transform hover:scale-[1.02]">
@@ -343,20 +352,18 @@ sudo dpkg -i BACKUP.deb</code></pre>
         // Default URL for the Linux Debian package
         const debPackageUrl = "https://github.com/fionn-playz/BACKUP/releases/latest/download/BACKUP.deb";
 
-        let userOS = 'Linux'; // Assume Linux/ChromeOS by default as that is the compatible target OS
-        const userAgent = navigator.userAgent;
-
-        if (userAgent.includes('Mac')) {
-            userOS = 'Mac';
-        } else if (userAgent.includes('Win')) {
-            userOS = 'Windows'; // Windows is the main incompatible OS that triggers the warning
-        } else if (userAgent.includes('CrOS')) {
-            // ChromeOS is now treated as compatible (Linux)
-            userOS = 'ChromeOS';
-        }
-        
+        let userOS = 'Linux'; // Default
         let hasDownloaded = false;
         let downloadLink = debPackageUrl; // Track the link to download if user confirms in modal
+
+        // --- OS SWITCHER FUNCTION ---
+
+        function setOS(osName) {
+            userOS = osName;
+            // Reset the download state when switching OS to ensure the user downloads the correct file.
+            hasDownloaded = false; 
+            initUI(); // Re-initialize UI based on new OS selection
+        }
 
         // --- MODAL FUNCTIONS ---
 
@@ -383,8 +390,8 @@ sudo dpkg -i BACKUP.deb</code></pre>
                 );
 
                 const button = document.getElementById('downloadButton');
-                button.classList.remove('bg-red-600', 'hover:bg-red-700'); // Remove red warning style
-                button.classList.add('bg-gray-400', 'hover:bg-gray-500'); // Set to gray completed style
+                button.classList.remove('bg-red-600', 'hover:bg-red-700', 'bg-indigo-600', 'hover:bg-indigo-700'); 
+                button.classList.add('bg-gray-400', 'hover:bg-gray-500'); 
                 
                 hasDownloaded = true;
 
@@ -396,13 +403,12 @@ sudo dpkg -i BACKUP.deb</code></pre>
                     '2. Install the Utility'
                 );
                 
-                // Note: The download itself is handled by the <a> tag href change.
                 hideOSWarningModal();
             }
         }
 
 
-        // --- UI/STATE FUNCTIONS (Updated to handle OS logic) ---
+        // --- UI/STATE FUNCTIONS ---
 
         function updateSectionColors(sectionId, newBg, newBorder, newTitleColor, newTitleText) {
             const section = document.getElementById(sectionId);
@@ -414,17 +420,11 @@ sudo dpkg -i BACKUP.deb</code></pre>
             const oldTitleColor = ['text-indigo-800', 'text-gray-700'];
 
             if (section) {
-                // Remove all old classes
                 section.classList.remove(...oldBg, ...oldBorder);
-                
-                // Add new classes
                 section.classList.add(newBg, newBorder);
             }
             if (title) {
-                // Remove old title classes
                 title.classList.remove(...oldTitleColor);
-                
-                // Add new title classes
                 title.classList.add(newTitleColor);
                 title.textContent = newTitleText;
             }
@@ -446,12 +446,11 @@ sudo dpkg -i BACKUP.deb</code></pre>
                     'bg-gray-100', 
                     'border-gray-400', 
                     'text-gray-700', 
-                    '1. Package Downloaded'
+                    userOS === 'Mac' ? '1. Files Downloaded' : '1. Package Downloaded'
                 );
 
                 // 1. Change Download Button to Grey (To visually indicate completion)
                 const button = event.currentTarget;
-                // Remove the initial blue or the warning red, depending on the OS
                 button.classList.remove('bg-indigo-600', 'hover:bg-indigo-700', 'bg-red-600', 'hover:bg-red-700');
                 button.classList.add('bg-gray-400', 'hover:bg-gray-500');
                 
@@ -472,8 +471,7 @@ sudo dpkg -i BACKUP.deb</code></pre>
                     installSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             }
-
-            // The default action (downloading the file) continues for Mac, Linux, and ChromeOS.
+            // The default action (downloading the file) continues for compatible OSes.
         }
 
 
@@ -494,7 +492,6 @@ sudo dpkg -i BACKUP.deb</code></pre>
             
             let success = false;
             try {
-                // document.execCommand('copy') is used for clipboard operations in this restricted environment
                 success = document.execCommand('copy');
             } catch (err) {
                 console.error('Copy failed:', err);
@@ -531,29 +528,45 @@ sudo dpkg -i BACKUP.deb</code></pre>
             }
         }
 
-        // Initialize: Ensure the second card starts in the PENDING (Gray) state and apply OS detection changes
-        document.addEventListener('DOMContentLoaded', () => {
+        // Centralized UI initialization function
+        function initUI() {
             const downloadButton = document.getElementById('downloadButton');
             const downloadTitle = document.getElementById('downloadTitle');
             const downloadSubtext = document.getElementById('downloadSubtext');
             const installSection = document.getElementById('installSection');
+            const installTitle = document.getElementById('installTitle');
             const installSubtext = document.getElementById('installSubtext');
             const installCommandCode = document.getElementById('installCommand').querySelector('code');
             const downloadAria = document.getElementById('downloadButton');
+            const switchLinux = document.getElementById('switchLinux');
+            const switchMac = document.getElementById('switchMac');
+            
+            // 1. OS Switcher Styling
+            [switchLinux, switchMac].forEach(button => {
+                button.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600', 'bg-white', 'text-gray-700', 'border-gray-300');
+            });
+
+            if (userOS === 'Linux' || userOS === 'ChromeOS' || userOS === 'Windows') {
+                switchLinux.classList.add('bg-indigo-600', 'text-white', 'border-indigo-600');
+                switchMac.classList.add('bg-white', 'text-gray-700', 'border-gray-300');
+            } else if (userOS === 'Mac') {
+                switchMac.classList.add('bg-indigo-600', 'text-white', 'border-indigo-600');
+                switchLinux.classList.add('bg-white', 'text-gray-700', 'border-gray-300');
+            }
 
 
-            // 1. OS Detection Customization (Mac/Apple)
+            // 2. OS-Specific Content Logic
+            downloadButton.classList.remove('bg-red-600', 'hover:bg-red-700', 'bg-gray-400', 'hover:bg-gray-500');
+            downloadButton.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+            
             if (userOS === 'Mac') {
-                // Update Download Section for Mac
+                // Mac instructions
                 downloadButton.href = macScriptUrl;
-                // Note: The user also needs to manually download the completion script. 
-                // We'll update the text to prompt them to download BOTH files from the releases page.
                 downloadButton.innerHTML = `<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>Go to GitHub Releases Page`;
                 downloadTitle.textContent = "1. Download Both Mac Files";
                 downloadSubtext.textContent = "Please download both **`backup.sh`** and **`backup_completion.sh`** from the GitHub Releases page.";
                 downloadAria.setAttribute('aria-label', 'Go to GitHub Releases to download Mac files');
                 
-                // Update Install Section for Mac
                 installTitle.textContent = "2. Install Utility & Autocomplete (Mac)";
                 installSubtext.textContent = "Once both files are downloaded to your Downloads folder, run these commands in your Mac terminal to install the utility globally and enable autocompletion:";
                 
@@ -564,14 +577,14 @@ chmod +x /usr/local/bin/backup
 mv ~/Downloads/backup_completion.sh /usr/local/share/zsh/site-functions/_backup
 autoload -U compinit && compinit`;
 
-                installSection.style.display = 'block'; // Ensure it's visible
-
             } else if (userOS === 'Windows') {
-                // Incompatible OS - Keep the link as deb, but clicking it will trigger the modal
+                // Windows Warning
+                downloadButton.href = debPackageUrl;
                 downloadTitle.textContent = "1. Download the Debian Package";
                 downloadSubtext.textContent = `Warning: This package is for Linux. Your OS (${userOS}) is not compatible.`;
                 downloadButton.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
                 downloadButton.classList.add('bg-red-600', 'hover:bg-red-700');
+                downloadButton.innerHTML = `<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>Download Latest .DEB`;
                 downloadAria.setAttribute('aria-label', 'Download the Linux Debian Package (Warning: OS Incompatible)');
                 
                 // Reset install section content to Linux default
@@ -580,16 +593,13 @@ autoload -U compinit && compinit`;
                 installCommandCode.textContent = 
                     `sudo apt install zip tar -y
 sudo dpkg -i BACKUP.deb`;
-                installSection.style.display = 'block'; // Ensure it's visible if it was hidden
 
             } else {
-                // Compatible OS (Linux, ChromeOS) - Use default Debian setup with integrated autocomplete
+                // Linux / ChromeOS (Compatible with Debian package)
                 downloadButton.href = debPackageUrl;
                 downloadButton.innerHTML = `<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>Download Latest .DEB (With Autocomplete!)`;
                 downloadTitle.textContent = "1. Download the Package";
                 downloadSubtext.textContent = "Get the latest Debian package (`.deb` file) with **built-in autocomplete** from the GitHub Releases page.";
-                downloadButton.classList.remove('bg-red-600', 'hover:bg-red-700'); // Remove red if it somehow got applied
-                downloadButton.classList.add('bg-indigo-600', 'hover:bg-indigo-700'); // Ensure it's blue
                 downloadAria.setAttribute('aria-label', 'Download the Linux Debian Package');
                 
                 // Reset install section content to Linux default
@@ -598,27 +608,63 @@ sudo dpkg -i BACKUP.deb`;
                 installCommandCode.textContent = 
                     `sudo apt install zip tar -y
 sudo dpkg -i BACKUP.deb`;
-                installSection.style.display = 'block'; // Ensure it's visible
             }
 
+            // 3. Set initial download state colors (reflects 'hasDownloaded' state)
+            if (hasDownloaded) {
+                 updateSectionColors(
+                    'downloadSection', 
+                    'bg-gray-100', 
+                    'border-gray-400', 
+                    'text-gray-700', 
+                    userOS === 'Mac' ? '1. Files Downloaded' : '1. Package Downloaded'
+                );
+                document.getElementById('downloadButton').classList.remove('bg-indigo-600', 'hover:bg-indigo-700', 'bg-red-600', 'hover:bg-red-700');
+                document.getElementById('downloadButton').classList.add('bg-gray-400', 'hover:bg-gray-500');
+                
+                updateSectionColors(
+                    'installSection', 
+                    'bg-indigo-50', 
+                    'border-indigo-500', 
+                    'text-indigo-800', 
+                    '2. Install the Utility'
+                );
 
-            // 2. Set initial state for sections
-            updateSectionColors(
-                'downloadSection', 
-                'bg-indigo-50', 
-                'border-indigo-500', 
-                'text-indigo-800', 
-                downloadTitle.textContent // Use potentially updated title text
-            );
-            updateSectionColors(
-                'installSection', 
-                'bg-gray-100', 
-                'border-gray-400', 
-                'text-gray-700', 
-                installTitle.textContent // Use potentially updated title text
-            );
+            } else {
+                // Set initial state for sections (Active download, Pending install)
+                updateSectionColors(
+                    'downloadSection', 
+                    'bg-indigo-50', 
+                    'border-indigo-500', 
+                    'text-indigo-800', 
+                    downloadTitle.textContent
+                );
+                updateSectionColors(
+                    'installSection', 
+                    'bg-gray-100', 
+                    'border-gray-400', 
+                    'text-gray-700', 
+                    installTitle.textContent
+                );
+            }
+        }
+
+
+        // Initialize: Run the UI setup on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initial OS detection logic (runs once on load)
+            const userAgent = navigator.userAgent;
+            if (userAgent.includes('Mac')) {
+                userOS = 'Mac';
+            } else if (userAgent.includes('Win')) {
+                userOS = 'Windows';
+            } else if (userAgent.includes('CrOS')) {
+                userOS = 'Linux'; // Treat ChromeOS as compatible with Debian/Linux install
+            }
             
-            // 3. Set Dynamic Footer Year
+            initUI();
+            
+            // Set Dynamic Footer Year
             document.getElementById('dynamicFooter').textContent = 
                 `© ${new Date().getFullYear()} Simple Backup Utility. All rights reserved.`;
         });
