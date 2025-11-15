@@ -360,12 +360,21 @@ sudo dpkg -i BACKUP.deb</code></pre>
         // --- UTILITY FUNCTIONS ---
 
         // Function to trigger a download using a temporary hidden link
-        function triggerDownload(url, delay = 0) {
+        // Added optional filename parameter for explicit saving
+        function triggerDownload(url, filename = '', delay = 0) {
             if (url && url !== '#') {
                 setTimeout(() => {
                     const tempLink = document.createElement('a');
                     tempLink.href = url;
-                    tempLink.setAttribute('download', ''); // Force download attribute
+                    
+                    // Set download attribute explicitly
+                    if (filename) {
+                        tempLink.setAttribute('download', filename); 
+                    } else {
+                        // Use generic attribute if no filename is provided
+                        tempLink.setAttribute('download', ''); 
+                    }
+                    
                     tempLink.style.display = 'none';
                     document.body.appendChild(tempLink);
                     tempLink.click();
@@ -465,10 +474,11 @@ sudo dpkg -i BACKUP.deb</code></pre>
                 
                 // --- STEP 0: Trigger Download(s) ---
                 if (userOS === 'Mac') {
-                    // Trigger first download immediately
-                    triggerDownload(macScriptUrl); 
-                    // Trigger second download with a small delay (500ms) to avoid browser prompt
-                    triggerDownload(macCompletionUrl, 500); 
+                    // FIX: Explicitly setting the filenames here ensures the browser saves both correctly.
+                    // 1. Download backup.sh first (immediately)
+                    triggerDownload(macScriptUrl, 'backup.sh'); 
+                    // 2. Download backup_completion.sh after 500ms
+                    triggerDownload(macCompletionUrl, 'backup_completion.sh', 500); 
                 } else {
                     // Trigger single download for Linux/ChromeOS
                     triggerDownload(debPackageUrl);
