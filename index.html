@@ -140,6 +140,7 @@
 
             <a id="downloadButton" href="https://github.com/fionn-playz/BACKUP/releases/latest/download/BACKUP.deb" 
                 onclick="downloadClicked(event)"
+                aria-label="Download the Backup Installation File"
                 class="inline-flex items-center justify-center w-full md:w-auto px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-lg text-white bg-indigo-600 hover:bg-indigo-700 transition duration-150 ease-in-out transform hover:scale-[1.02]">
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                 Download Latest .DEB
@@ -160,7 +161,9 @@ sudo dpkg -i BACKUP.deb</code></pre>
                 </div>
 
                 <!-- Copy Button -->
-                <button onclick="copyCommand()" class="flex items-center justify-center flex-shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition duration-150 h-auto shadow-md">
+                <button onclick="copyCommand()" 
+                    aria-label="Copy Installation Command to Clipboard"
+                    class="flex items-center justify-center flex-shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition duration-150 h-auto shadow-md">
                     <svg class="w-5 h-5" id="copyIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-1M8 5v2m0 0h8m-8 0H6M20 7v10m-4-2H4"></path></svg>
                     <span id="copyText" class="ml-2">Copy</span> 
                 </button>
@@ -180,6 +183,7 @@ sudo dpkg -i BACKUP.deb</code></pre>
                 <div class="video-container">
                     
                     <video autoplay loop muted>
+                       <!-- Assumes user has replaced this with their video, as requested previously -->
                        <source src="Preview.mp4" type="video/mp4">
                        Sorry, your browser doesn't support embedded videos.
                     </video>
@@ -188,7 +192,7 @@ sudo dpkg -i BACKUP.deb</code></pre>
             </div>
             
             <h3 class="text-xl font-semibold text-gray-700 mt-6 mb-3">Usage Guide</h3>
-            <p class="text-gray-600 mb-4">The utility is run using the simple `backup` command. Provide the directory to archive and a name for the output file.</p>
+            <p class="text-gray-600 mb-4">The utility is run using the simple <code class="bg-gray-200 p-1 rounded font-mono text-indigo-700">backup</code> command. Provide the directory to archive and a name for the output file.</p>
             
             <!-- Usage Code Block -->
             <div class="bg-gray-100 rounded-lg p-3 font-mono text-sm overflow-x-auto text-gray-800 border border-gray-200">
@@ -236,10 +240,18 @@ sudo dpkg -i BACKUP.deb</code></pre>
                     <svg class="w-6 h-6 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 17V10M9 14l3 3m3-3l-3 3"></path></svg>
                     <p class="text-gray-700 leading-tight">**Auto Folder Creation:** Puts all the files in a folder name backups that it automatically creates!</p>
                 </div>
+                
+                <!-- NEW FEATURE: Autocomplete -->
+                <div class="feature-item">
+                    <!-- Keyboard icon for speed/autocomplete -->
+                    <svg class="w-6 h-6 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                    <p class="text-gray-700 leading-tight">**Shell Autocomplete:** Smart path completion for Linux and Mac users, saving time and preventing typos!</p>
+                </div>
+
             </div>
         </section>
 
-        <!-- FAQ Section -->
+        <!-- FAQ Section (Unchanged) -->
         <section class="mb-8 p-6 bg-white rounded-xl border border-gray-200">
             <h2 class="text-2xl font-bold text-gray-800 mb-4">Frequently Asked Questions (FAQ)</h2>
             <div class="divide-y divide-gray-200">
@@ -270,7 +282,7 @@ sudo dpkg -i BACKUP.deb</code></pre>
         </section>
 
 
-        <!-- Support Section -->
+        <!-- Support Section (Unchanged) -->
         <section class="text-center pt-4 border-t border-gray-200">
             <h2 class="text-xl font-semibold text-gray-700 mb-3">Found an Issue?</h2>
             <!-- Shorter Description -->
@@ -281,6 +293,12 @@ sudo dpkg -i BACKUP.deb</code></pre>
                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                Report a Bug
             </a>
+            
+            <!-- NEW: Dynamic Footer/Copyright -->
+            <footer id="dynamicFooter" class="mt-8 text-center text-sm text-gray-500">
+                <!-- Content set by JavaScript -->
+            </footer>
+            
         </section>
     </div>
 
@@ -318,8 +336,10 @@ sudo dpkg -i BACKUP.deb</code></pre>
     <script>
         // --- CONSTANTS AND OS DETECTION ---
         
-        // Hypothetical URL for a Mac package (User requested Mac support) - Changed to .sh to reflect direct script use
+        // Hypothetical URL for a Mac package (User requested Mac support)
         const macScriptUrl = "https://github.com/fionn-playz/BACKUP/releases/latest/download/backup.sh"; 
+        // Hypothetical URL for the Mac completion script
+        const macCompletionUrl = "https://github.com/fionn-playz/BACKUP/releases/latest/download/backup_completion.sh"; 
         // Default URL for the Linux Debian package
         const debPackageUrl = "https://github.com/fionn-playz/BACKUP/releases/latest/download/BACKUP.deb";
 
@@ -519,23 +539,30 @@ sudo dpkg -i BACKUP.deb</code></pre>
             const installSection = document.getElementById('installSection');
             const installSubtext = document.getElementById('installSubtext');
             const installCommandCode = document.getElementById('installCommand').querySelector('code');
+            const downloadAria = document.getElementById('downloadButton');
 
 
             // 1. OS Detection Customization (Mac/Apple)
             if (userOS === 'Mac') {
                 // Update Download Section for Mac
                 downloadButton.href = macScriptUrl;
-                downloadButton.innerHTML = `<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>Download Latest Backup Script (.sh)`;
-                downloadTitle.textContent = "1. Download the Mac Script";
-                downloadSubtext.textContent = "Get the latest, raw executable script (.sh) from the GitHub Releases page.";
+                // Note: The user also needs to manually download the completion script. 
+                // We'll update the text to prompt them to download BOTH files from the releases page.
+                downloadButton.innerHTML = `<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>Go to GitHub Releases Page`;
+                downloadTitle.textContent = "1. Download Both Mac Files";
+                downloadSubtext.textContent = "Please download both **`backup.sh`** and **`backup_completion.sh`** from the GitHub Releases page.";
+                downloadAria.setAttribute('aria-label', 'Go to GitHub Releases to download Mac files');
                 
                 // Update Install Section for Mac
-                installSubtext.textContent = "Once downloaded, run these commands in your Mac terminal to install the utility globally:";
+                installTitle.textContent = "2. Install Utility & Autocomplete (Mac)";
+                installSubtext.textContent = "Once both files are downloaded to your Downloads folder, run these commands in your Mac terminal to install the utility globally and enable autocompletion:";
                 
-                // Mac installation commands
+                // Mac installation commands (Global script + Zsh completion)
                 installCommandCode.textContent = 
                     `mv ~/Downloads/backup.sh /usr/local/bin/backup
-chmod +x /usr/local/bin/backup`;
+chmod +x /usr/local/bin/backup
+mv ~/Downloads/backup_completion.sh /usr/local/share/zsh/site-functions/_backup
+autoload -U compinit && compinit`;
 
                 installSection.style.display = 'block'; // Ensure it's visible
 
@@ -545,8 +572,10 @@ chmod +x /usr/local/bin/backup`;
                 downloadSubtext.textContent = `Warning: This package is for Linux. Your OS (${userOS}) is not compatible.`;
                 downloadButton.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
                 downloadButton.classList.add('bg-red-600', 'hover:bg-red-700');
+                downloadAria.setAttribute('aria-label', 'Download the Linux Debian Package (Warning: OS Incompatible)');
                 
                 // Reset install section content to Linux default
+                installTitle.textContent = "2. Install the Utility";
                 installSubtext.textContent = "Once downloaded, run these commands in your terminal:";
                 installCommandCode.textContent = 
                     `sudo apt install zip tar -y
@@ -554,15 +583,17 @@ sudo dpkg -i BACKUP.deb`;
                 installSection.style.display = 'block'; // Ensure it's visible if it was hidden
 
             } else {
-                // Compatible OS (Linux, ChromeOS) - Use default Debian setup
+                // Compatible OS (Linux, ChromeOS) - Use default Debian setup with integrated autocomplete
                 downloadButton.href = debPackageUrl;
-                downloadButton.innerHTML = `<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>Download Latest .DEB`;
+                downloadButton.innerHTML = `<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>Download Latest .DEB (With Autocomplete!)`;
                 downloadTitle.textContent = "1. Download the Package";
-                downloadSubtext.textContent = "Get the latest Debian package (`.deb` file) from the GitHub Releases page.";
+                downloadSubtext.textContent = "Get the latest Debian package (`.deb` file) with **built-in autocomplete** from the GitHub Releases page.";
                 downloadButton.classList.remove('bg-red-600', 'hover:bg-red-700'); // Remove red if it somehow got applied
                 downloadButton.classList.add('bg-indigo-600', 'hover:bg-indigo-700'); // Ensure it's blue
+                downloadAria.setAttribute('aria-label', 'Download the Linux Debian Package');
                 
                 // Reset install section content to Linux default
+                installTitle.textContent = "2. Install the Utility";
                 installSubtext.textContent = "Once downloaded, run these commands in your terminal:";
                 installCommandCode.textContent = 
                     `sudo apt install zip tar -y
@@ -584,8 +615,12 @@ sudo dpkg -i BACKUP.deb`;
                 'bg-gray-100', 
                 'border-gray-400', 
                 'text-gray-700', 
-                '2. Install the Utility'
+                installTitle.textContent // Use potentially updated title text
             );
+            
+            // 3. Set Dynamic Footer Year
+            document.getElementById('dynamicFooter').textContent = 
+                `© ${new Date().getFullYear()} Simple Backup Utility. All rights reserved.`;
         });
 
     </script>
