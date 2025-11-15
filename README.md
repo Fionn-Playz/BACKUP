@@ -27,3 +27,5 @@ Nov 15 - 8:24 - refined website
 Nov 16 - 10:21 - refined website even more
 
 Nov 16 - 10:42 - Added compatablity for Macs
+
+Nov 16 - 12:11 - Added autocomplete feature by pressing tab
