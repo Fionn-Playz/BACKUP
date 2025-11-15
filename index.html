@@ -20,7 +20,8 @@
         
         /* Custom CSS for Code Block */
         .code-container {
-            height: 60px; 
+            /* Changed from fixed height: 60px to min-height to accommodate 4 lines of Mac code */
+            min-height: 80px; 
             padding-top: 8px;
             padding-bottom: 8px; 
         }
@@ -356,6 +357,23 @@ sudo dpkg -i BACKUP.deb</code></pre>
         let hasDownloaded = false;
         let downloadLink = debPackageUrl; // Track the link to download if user confirms in modal
 
+        // --- UTILITY FUNCTIONS ---
+
+        // Function to trigger a download using a temporary hidden link
+        function triggerDownload(url, delay = 0) {
+            if (url && url !== '#') {
+                setTimeout(() => {
+                    const tempLink = document.createElement('a');
+                    tempLink.href = url;
+                    tempLink.setAttribute('download', ''); // Force download attribute
+                    tempLink.style.display = 'none';
+                    document.body.appendChild(tempLink);
+                    tempLink.click();
+                    document.body.removeChild(tempLink);
+                }, delay);
+            }
+        }
+        
         // --- OS SWITCHER FUNCTION ---
 
         function setOS(osName) {
@@ -369,7 +387,8 @@ sudo dpkg -i BACKUP.deb</code></pre>
 
         function showOSWarningModal(downloadUrl) {
             downloadLink = downloadUrl;
-            document.getElementById('modalContinueButton').href = downloadUrl;
+            // Since we use triggerDownload now, the modal button just executes the downloadClicked logic after confirming
+            document.getElementById('modalContinueButton').href = 'javascript:void(0)';
             document.getElementById('incompatibleOSName').textContent = userOS;
             document.getElementById('osWarningModal').classList.remove('hidden');
         }
@@ -379,8 +398,11 @@ sudo dpkg -i BACKUP.deb</code></pre>
         }
 
         function continueDownloadFromModal() {
-            // Replicates the download success action before initiating the download
+            // Replicates the action taken by downloadClicked after a successful check
             if (!hasDownloaded) {
+                // Since this is Windows, we only download the .deb file
+                triggerDownload(debPackageUrl);
+                
                 updateSectionColors(
                     'downloadSection', 
                     'bg-gray-100', 
@@ -431,22 +453,34 @@ sudo dpkg -i BACKUP.deb</code></pre>
         }
 
         function downloadClicked(event) {
-            // Check only for incompatible OS (Windows)
-            if (userOS === 'Windows' && !hasDownloaded) { 
-                event.preventDefault(); // Stop the link from opening immediately
-                showOSWarningModal(debPackageUrl); // Show the warning modal
-                return;
-            }
+            // Stop the link from opening immediately as we manage the download via JS now
+            event.preventDefault(); 
             
-            // If we reach here, it's Mac, Linux, ChromeOS, or the user is continuing from the modal.
             if (!hasDownloaded) {
+                // Check only for incompatible OS (Windows)
+                if (userOS === 'Windows') { 
+                    showOSWarningModal(debPackageUrl); // Show the warning modal
+                    return;
+                }
+                
+                // --- STEP 0: Trigger Download(s) ---
+                if (userOS === 'Mac') {
+                    // Trigger first download immediately
+                    triggerDownload(macScriptUrl); 
+                    // Trigger second download with a small delay (500ms) to avoid browser prompt
+                    triggerDownload(macCompletionUrl, 500); 
+                } else {
+                    // Trigger single download for Linux/ChromeOS
+                    triggerDownload(debPackageUrl);
+                }
+
                 // --- STEP 1: Update Download Card (From ACTIVE/Indigo to COMPLETED/Gray) ---
                 updateSectionColors(
                     'downloadSection', 
                     'bg-gray-100', 
                     'border-gray-400', 
                     'text-gray-700', 
-                    userOS === 'Mac' ? '1. Files Downloaded' : '1. Package Downloaded'
+                    userOS === 'Mac' ? '1. Files Downloading...' : '1. Package Downloading...'
                 );
 
                 // 1. Change Download Button to Grey (To visually indicate completion)
@@ -471,7 +505,6 @@ sudo dpkg -i BACKUP.deb</code></pre>
                     installSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             }
-            // The default action (downloading the file) continues for compatible OSes.
         }
 
 
@@ -561,11 +594,12 @@ sudo dpkg -i BACKUP.deb</code></pre>
             
             if (userOS === 'Mac') {
                 // Mac instructions
-                downloadButton.href = macScriptUrl;
-                downloadButton.innerHTML = `<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>Go to GitHub Releases Page`;
+                downloadButton.href = '#'; // Use # since JS handles the download trigger
+                // Updated text to reflect the dual download behavior
+                downloadButton.innerHTML = `<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>Download Both Files`; 
                 downloadTitle.textContent = "1. Download Both Mac Files";
-                downloadSubtext.textContent = "Please download both **`backup.sh`** and **`backup_completion.sh`** from the GitHub Releases page.";
-                downloadAria.setAttribute('aria-label', 'Go to GitHub Releases to download Mac files');
+                downloadSubtext.textContent = "Click the button below to automatically download both **`backup.sh`** and **`backup_completion.sh`** with a single click.";
+                downloadAria.setAttribute('aria-label', 'Download both Mac files for the utility and autocomplete');
                 
                 installTitle.textContent = "2. Install Utility & Autocomplete (Mac)";
                 installSubtext.textContent = "Once both files are downloaded to your Downloads folder, run these commands in your Mac terminal to install the utility globally and enable autocompletion:";
@@ -579,7 +613,7 @@ autoload -U compinit && compinit`;
 
             } else if (userOS === 'Windows') {
                 // Windows Warning
-                downloadButton.href = debPackageUrl;
+                downloadButton.href = '#';
                 downloadTitle.textContent = "1. Download the Debian Package";
                 downloadSubtext.textContent = `Warning: This package is for Linux. Your OS (${userOS}) is not compatible.`;
                 downloadButton.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
@@ -596,7 +630,7 @@ sudo dpkg -i BACKUP.deb`;
 
             } else {
                 // Linux / ChromeOS (Compatible with Debian package)
-                downloadButton.href = debPackageUrl;
+                downloadButton.href = '#';
                 downloadButton.innerHTML = `<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>Download Latest .DEB (With Autocomplete!)`;
                 downloadTitle.textContent = "1. Download the Package";
                 downloadSubtext.textContent = "Get the latest Debian package (`.deb` file) with **built-in autocomplete** from the GitHub Releases page.";
@@ -617,7 +651,7 @@ sudo dpkg -i BACKUP.deb`;
                     'bg-gray-100', 
                     'border-gray-400', 
                     'text-gray-700', 
-                    userOS === 'Mac' ? '1. Files Downloaded' : '1. Package Downloaded'
+                    userOS === 'Mac' ? '1. Files Downloading...' : '1. Package Downloading...'
                 );
                 document.getElementById('downloadButton').classList.remove('bg-indigo-600', 'hover:bg-indigo-700', 'bg-red-600', 'hover:bg-red-700');
                 document.getElementById('downloadButton').classList.add('bg-gray-400', 'hover:bg-gray-500');
