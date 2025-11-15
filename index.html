@@ -102,6 +102,24 @@
             color: #4b5563; /* Gray-600 */
             height: 100%;
         }
+
+        /* Custom Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+        }
+        .modal-content {
+            max-width: 90%;
+            width: 400px;
+        }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
@@ -118,7 +136,7 @@
         <!-- 1. Download Section (Initial State: ACTIVE/Indigo) -->
         <section id="downloadSection" class="mb-8 p-6 bg-indigo-50 rounded-xl border-l-2 border-indigo-500 transition-colors duration-500">
             <h2 class="text-2xl font-bold text-indigo-800 mb-4" id="downloadTitle">1. Download the Package</h2>
-            <p class="text-gray-700 mb-6">Get the latest Debian package (`.deb` file) from the GitHub Releases page.</p>
+            <p class="text-gray-700 mb-6" id="downloadSubtext">Get the latest Debian package (`.deb` file) from the GitHub Releases page.</p>
 
             <a id="downloadButton" href="https://github.com/fionn-playz/BACKUP/releases/latest/download/BACKUP.deb" 
                 onclick="downloadClicked(event)"
@@ -161,13 +179,7 @@ sudo dpkg -i BACKUP.deb</code></pre>
             <div class="mb-8">
                 <div class="video-container">
                     
-                    <!-- 
-                        ACTION: Placeholder replaced with a <video> tag structure.
-                        
-                        1. Replace the "YOUR_VIDEO_URL_HERE.mp4" with the actual link to your video file.
-                        2. If your video is a GIF, you can change 'type="video/mp4"' to 'type="image/gif"'.
-                    -->
-                    <video nocontrols autoplay loop muted>
+                    <video autoplay loop muted>
                        <source src="Preview.mp4" type="video/mp4">
                        Sorry, your browser doesn't support embedded videos.
                     </video>
@@ -234,7 +246,7 @@ sudo dpkg -i BACKUP.deb</code></pre>
                 
                 <details>
                     <summary>Which operating systems are supported?</summary>
-                    <p class="mt-2 text-sm">The Simple Backup Utility is packaged as a **.deb** file, meaning it is designed for Debian-based Linux distributions, including **Ubuntu, Mint, Kali, and Debian itself**.</p>
+                    <p class="mt-2 text-sm">The Simple Backup Utility is packaged as a **.deb** file, meaning it is designed for Debian-based Linux distributions, including **Ubuntu, Mint, Kali, Debian, and ChromeOS (via Linux container)**.</p>
                 </details>
                 
                 <details>
@@ -272,10 +284,105 @@ sudo dpkg -i BACKUP.deb</code></pre>
         </section>
     </div>
 
+    <!-- OS INCOMPATIBILITY MODAL (Hidden by default) -->
+    <div id="osWarningModal" class="modal hidden transition-opacity duration-300">
+        <div class="modal-content bg-white p-6 rounded-xl shadow-2xl border-t-4 border-red-500">
+            <div class="flex items-center mb-4">
+                <svg class="w-6 h-6 text-red-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                <h3 class="text-xl font-bold text-gray-800">OS Compatibility Warning</h3>
+            </div>
+            
+            <p class="text-gray-700 mb-6">
+                <span id="incompatibleOSName" class="font-semibold">Your OS</span> is not officially supported by the Debian package (`.deb`). 
+                It's designed for Linux distributions like Ubuntu.
+            </p>
+            <p class="text-gray-700 mb-8 font-semibold">
+                Are you sure you want to continue to the Debian download page?
+            </p>
+
+            <div class="flex justify-end space-x-4">
+                <button onclick="hideOSWarningModal()" 
+                        class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition duration-150">
+                    Cancel
+                </button>
+                <a id="modalContinueButton" href="#" onclick="continueDownloadFromModal()"
+                   class="px-4 py-2 font-medium rounded-lg text-white bg-red-600 hover:bg-red-700 transition duration-150">
+                    Yes, Continue Download
+                </a>
+            </div>
+        </div>
+    </div>
+
+
     <!-- JavaScript -->
     <script>
-        // Flag to track if the download button has been clicked
+        // --- CONSTANTS AND OS DETECTION ---
+        
+        // Hypothetical URL for a Mac package (User requested Mac support)
+        const macPackageUrl = "https://github.com/fionn-playz/BACKUP/releases/latest/download/BACKUP-mac.pkg"; 
+        // Default URL for the Linux Debian package
+        const debPackageUrl = "https://github.com/fionn-playz/BACKUP/releases/latest/download/BACKUP.deb";
+
+        let userOS = 'Linux'; // Assume Linux/ChromeOS by default as that is the compatible target OS
+        const userAgent = navigator.userAgent;
+
+        if (userAgent.includes('Mac')) {
+            userOS = 'Mac';
+        } else if (userAgent.includes('Win')) {
+            userOS = 'Windows'; // Windows is the main incompatible OS that triggers the warning
+        } else if (userAgent.includes('CrOS')) {
+            // ChromeOS is now treated as compatible (Linux)
+            userOS = 'ChromeOS';
+        }
+        
         let hasDownloaded = false;
+        let downloadLink = debPackageUrl; // Track the link to download if user confirms in modal
+
+        // --- MODAL FUNCTIONS ---
+
+        function showOSWarningModal(downloadUrl) {
+            downloadLink = downloadUrl;
+            document.getElementById('modalContinueButton').href = downloadUrl;
+            document.getElementById('incompatibleOSName').textContent = userOS;
+            document.getElementById('osWarningModal').classList.remove('hidden');
+        }
+
+        function hideOSWarningModal() {
+            document.getElementById('osWarningModal').classList.add('hidden');
+        }
+
+        function continueDownloadFromModal() {
+            // Replicates the download success action before initiating the download
+            if (!hasDownloaded) {
+                updateSectionColors(
+                    'downloadSection', 
+                    'bg-gray-100', 
+                    'border-gray-400', 
+                    'text-gray-700', 
+                    '1. Package Downloaded'
+                );
+
+                const button = document.getElementById('downloadButton');
+                button.classList.remove('bg-red-600', 'hover:bg-red-700'); // Remove red warning style
+                button.classList.add('bg-gray-400', 'hover:bg-gray-500'); // Set to gray completed style
+                
+                hasDownloaded = true;
+
+                updateSectionColors(
+                    'installSection', 
+                    'bg-indigo-50', 
+                    'border-indigo-500', 
+                    'text-indigo-800', 
+                    '2. Install the Utility'
+                );
+                
+                // Note: The download itself is handled by the <a> tag href change.
+                hideOSWarningModal();
+            }
+        }
+
+
+        // --- UI/STATE FUNCTIONS (Updated to handle OS logic) ---
 
         function updateSectionColors(sectionId, newBg, newBorder, newTitleColor, newTitleText) {
             const section = document.getElementById(sectionId);
@@ -304,7 +411,14 @@ sudo dpkg -i BACKUP.deb</code></pre>
         }
 
         function downloadClicked(event) {
+            // Check only for incompatible OS (Windows)
+            if (userOS === 'Windows' && !hasDownloaded) { 
+                event.preventDefault(); // Stop the link from opening immediately
+                showOSWarningModal(debPackageUrl); // Show the warning modal
+                return;
+            }
             
+            // If we reach here, it's Mac, Linux, ChromeOS, or the user is continuing from the modal.
             if (!hasDownloaded) {
                 // --- STEP 1: Update Download Card (From ACTIVE/Indigo to COMPLETED/Gray) ---
                 updateSectionColors(
@@ -317,7 +431,8 @@ sudo dpkg -i BACKUP.deb</code></pre>
 
                 // 1. Change Download Button to Grey (To visually indicate completion)
                 const button = event.currentTarget;
-                button.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+                // Remove the initial blue or the warning red, depending on the OS
+                button.classList.remove('bg-indigo-600', 'hover:bg-indigo-700', 'bg-red-600', 'hover:bg-red-700');
                 button.classList.add('bg-gray-400', 'hover:bg-gray-500');
                 
                 hasDownloaded = true;
@@ -338,7 +453,7 @@ sudo dpkg -i BACKUP.deb</code></pre>
                 }
             }
 
-            // The default action (downloading the file) continues.
+            // The default action (downloading the file) continues for Mac, Linux, and ChromeOS.
         }
 
 
@@ -396,15 +511,49 @@ sudo dpkg -i BACKUP.deb</code></pre>
             }
         }
 
-        // Initialize: Ensure the second card starts in the PENDING (Gray) state
+        // Initialize: Ensure the second card starts in the PENDING (Gray) state and apply OS detection changes
         document.addEventListener('DOMContentLoaded', () => {
-            // This is the initial state, just confirming the IDs exist
+            const downloadButton = document.getElementById('downloadButton');
+            const downloadTitle = document.getElementById('downloadTitle');
+            const downloadSubtext = document.getElementById('downloadSubtext');
+            const installSection = document.getElementById('installSection');
+
+            // 1. OS Detection Customization (Mac/Apple)
+            if (userOS === 'Mac') {
+                downloadButton.href = macPackageUrl;
+                downloadButton.innerHTML = `<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>Download Latest .PKG for Mac`;
+                downloadTitle.textContent = "1. Download the Mac Package";
+                downloadSubtext.textContent = "Get the latest Mac package (.pkg file) from the GitHub Releases page.";
+                
+                // Hide the install section since Mac uses a different installation method
+                installSection.style.display = 'none';
+
+            } else if (userOS === 'Windows') {
+                // Incompatible OS - Keep the link as deb, but clicking it will trigger the modal
+                downloadTitle.textContent = "1. Download the Debian Package";
+                downloadSubtext.textContent = `Warning: This package is for Linux. Your OS (${userOS}) is not compatible.`;
+                downloadButton.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+                downloadButton.classList.add('bg-red-600', 'hover:bg-red-700');
+                installSection.style.display = 'block'; // Ensure it's visible if it was hidden
+            } else {
+                // Compatible OS (Linux, ChromeOS) - Use default Debian setup
+                downloadButton.href = debPackageUrl;
+                downloadButton.innerHTML = `<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>Download Latest .DEB`;
+                downloadTitle.textContent = "1. Download the Package";
+                downloadSubtext.textContent = "Get the latest Debian package (`.deb` file) from the GitHub Releases page.";
+                downloadButton.classList.remove('bg-red-600', 'hover:bg-red-700'); // Remove red if it somehow got applied
+                downloadButton.classList.add('bg-indigo-600', 'hover:bg-indigo-700'); // Ensure it's blue
+                installSection.style.display = 'block'; // Ensure it's visible
+            }
+
+
+            // 2. Set initial state for sections
             updateSectionColors(
                 'downloadSection', 
                 'bg-indigo-50', 
                 'border-indigo-500', 
                 'text-indigo-800', 
-                '1. Download the Package'
+                downloadTitle.textContent // Use potentially updated title text
             );
             updateSectionColors(
                 'installSection', 
