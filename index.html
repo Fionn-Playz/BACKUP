@@ -165,7 +165,7 @@
             <div class="flex items-center space-x-3">
                 
                 <!-- Code Block -->
-                <div class="bg-gray-800 rounded-lg px-3 flex-grow min-w-0 flex items-center code-container">
+                <div class="bg-gray-800 rounded-lg px-4 flex-grow min-w-0 flex items-center code-container">
                     <pre id="installCommand" class="text-white text-sm md:text-base select-all overflow-x-auto"><code>sudo apt install zip tar -y
 sudo dpkg -i BACKUP.deb</code></pre>
                 </div>
@@ -347,9 +347,9 @@ sudo dpkg -i BACKUP.deb</code></pre>
         // --- CONSTANTS AND OS DETECTION ---
         
         // Hypothetical URL for a Mac package (User requested Mac support)
-        const macScriptUrl = "https://github.com/fionn-playz/BACKUP/releases/latest/download/backup.sh"; 
+        const macScriptUrl = "https://github.com/fionn-playz/BACKUP/releases/latest/download/BACKUP.zip"; 
         // Hypothetical URL for the Mac completion script
-        const macCompletionUrl = "https://github.com/fionn-playz/BACKUP/releases/latest/download/backup_completion.sh"; 
+        const macCompletionUrl = "https://github.com/fionn-playz/BACKUP/releases/latest/download/BACKUP.zip"; 
         // Default URL for the Linux Debian package
         const debPackageUrl = "https://github.com/fionn-playz/BACKUP/releases/latest/download/BACKUP.deb";
 
@@ -616,7 +616,8 @@ sudo dpkg -i BACKUP.deb</code></pre>
                 
                 // Mac installation commands (Global script + Zsh completion)
                 installCommandCode.textContent = 
-                    `mv ~/Downloads/backup.sh /usr/local/bin/backup
+                    `unzip BACKUP.zip
+mv ~/Downloads/backup.sh /usr/local/bin/backup
 chmod +x /usr/local/bin/backup
 mv ~/Downloads/backup_completion.sh /usr/local/share/zsh/site-functions/_backup
 autoload -U compinit && compinit`;
